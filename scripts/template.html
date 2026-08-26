@@ -1,0 +1,626 @@
+<title>Painel de Custos — Obra 20</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --bg: #f6f3ec;
+    --surface: #fffdf8;
+    --surface-2: #efe9dc;
+    --line: rgba(23,19,13,0.12);
+    --line-strong: rgba(23,19,13,0.22);
+    --ink: #18140e;
+    --ink-2: #5c5648;
+    --muted: #8d8574;
+    --accent: #b5661a;
+    --accent-ink: #fff8ef;
+    --good: #0ca30c;
+    --critical: #b3261e;
+    --critical-bg: #fbe9e6;
+    --chip-bg: #efe9dc;
+    --cat-1: #2a78d6; /* Mão de Obra */
+    --cat-2: #eb6834; /* Materiais */
+    --cat-3: #1baf7a; /* Serviços de Terceiros */
+    --cat-4: #eda100; /* Equipamentos */
+    --cat-5: #e87ba4; /* Despesas Administrativas */
+    --treasury: #4a3aa7;
+    --shadow: 0 1px 2px rgba(23,19,13,0.06), 0 8px 24px -16px rgba(23,19,13,0.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg: #121009;
+      --surface: #1c1811;
+      --surface-2: #241f16;
+      --line: rgba(255,251,240,0.12);
+      --line-strong: rgba(255,251,240,0.22);
+      --ink: #f6f2e8;
+      --ink-2: #c7bfab;
+      --muted: #948c78;
+      --accent: #e0973f;
+      --accent-ink: #1c1811;
+      --good: #35c440;
+      --critical: #ff8a75;
+      --critical-bg: #3a1c17;
+      --chip-bg: #241f16;
+      --cat-1: #3987e5;
+      --cat-2: #d95926;
+      --cat-3: #199e70;
+      --cat-4: #c98500;
+      --cat-5: #d55181;
+      --treasury: #9085e9;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -16px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg: #121009;
+    --surface: #1c1811;
+    --surface-2: #241f16;
+    --line: rgba(255,251,240,0.12);
+    --line-strong: rgba(255,251,240,0.22);
+    --ink: #f6f2e8;
+    --ink-2: #c7bfab;
+    --muted: #948c78;
+    --accent: #e0973f;
+    --accent-ink: #1c1811;
+    --good: #35c440;
+    --critical: #ff8a75;
+    --critical-bg: #3a1c17;
+    --chip-bg: #241f16;
+    --cat-1: #3987e5;
+    --cat-2: #d95926;
+    --cat-3: #199e70;
+    --cat-4: #c98500;
+    --cat-5: #d55181;
+    --treasury: #9085e9;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -16px rgba(0,0,0,0.6);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 28px 24px 80px; }
+  h1,h2,h3{ font-family:"Oswald", system-ui, sans-serif; font-weight:600; letter-spacing: 0.01em; text-wrap: balance; margin:0; }
+  .tabular{ font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+
+  /* ---------- masthead ---------- */
+  .masthead{ display:flex; flex-direction:column; gap:6px; padding-bottom:20px; border-bottom: 2px solid var(--ink); margin-bottom: 28px; }
+  .eyebrow{ font-family:"Oswald", sans-serif; font-size: 12.5px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color: var(--accent); }
+  .masthead h1{ font-size: 34px; }
+  .masthead .sub{ color: var(--ink-2); font-size:14.5px; display:flex; gap:16px; flex-wrap:wrap; margin-top:2px; }
+  .masthead .sub b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- KPI row ---------- */
+  .kpis{ display:grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap:1px; background: var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:32px; box-shadow: var(--shadow); }
+  .kpi{ background: var(--surface); padding:16px 18px; display:flex; flex-direction:column; gap:6px; min-height: 96px; }
+  .kpi .label{ font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em; color: var(--muted); font-weight:600; }
+  .kpi .value{ font-size: 20px; line-height:1.2; font-weight:600; font-family:"IBM Plex Sans", sans-serif; white-space:nowrap; }
+  .kpi .value.critical{ color: var(--critical); }
+  .kpi .value.good{ color: var(--good); }
+  .kpi .note{ font-size:12px; color: var(--muted); }
+
+  section{ margin-bottom: 40px; }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+  .section-head h2{ font-size:19px; }
+  .section-head .desc{ color: var(--muted); font-size:13px; }
+
+  .card{ background: var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px; box-shadow: var(--shadow); }
+
+  .grid-2{ display:grid; grid-template-columns: 1.1fr 1fr; gap:20px; align-items:stretch; }
+  @media (max-width: 880px){ .grid-2{ grid-template-columns: 1fr; } }
+
+  /* ---------- legend ---------- */
+  .legend{ display:flex; flex-wrap:wrap; gap:14px; margin-bottom:16px; }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:12.5px; color: var(--ink-2); }
+  .swatch{ width:10px; height:10px; border-radius:2px; flex:none; }
+
+  /* ---------- ranked bar chart ---------- */
+  .rankbar-row{ display:grid; grid-template-columns: 168px 1fr 96px; align-items:center; gap:10px; padding: 7px 0; }
+  .rankbar-row .rb-label{ font-size:13px; color: var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rankbar-track{ position:relative; height:22px; background: var(--surface-2); border-radius:4px; }
+  .rankbar-fill{ position:absolute; left:0; top:0; height:100%; border-radius:4px; min-width:3px; transition: width .3s ease; }
+  .rankbar-row .rb-value{ font-size:13px; text-align:right; }
+  .rankbar-row .rb-pct{ color: var(--muted); font-size:11.5px; }
+
+  /* ---------- stacked monthly chart ---------- */
+  .stackchart{ display:flex; align-items:flex-end; gap:28px; height: 240px; padding: 8px 8px 0; }
+  .stack-col{ display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; height:100%; justify-content:flex-end; }
+  .stack-total{ font-size:13px; font-weight:600; }
+  .stack-bar{ width: 64px; display:flex; flex-direction:column-reverse; border-radius:4px 4px 0 0; overflow:hidden; }
+  .stack-seg{ width:100%; cursor:pointer; }
+  .stack-label{ font-family:"Oswald",sans-serif; font-size:12.5px; letter-spacing:0.04em; text-transform:uppercase; color: var(--ink-2); }
+
+  /* tooltip */
+  .viztip{ position:fixed; pointer-events:none; z-index:50; background: var(--ink); color: var(--bg); font-size:12.5px; padding:7px 10px; border-radius:6px; box-shadow: var(--shadow); opacity:0; transform: translate(-50%,-100%); transition: opacity .1s ease; max-width:240px; }
+  .viztip.show{ opacity:1; }
+  .viztip .t-val{ font-weight:700; font-size:13.5px; }
+  .viztip .t-key{ opacity:.75; }
+
+  /* ---------- accordion detail table ---------- */
+  .acc{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); box-shadow: var(--shadow); }
+  .acc-group{ border-top:1px solid var(--line); }
+  .acc-group:first-child{ border-top:none; }
+  .acc-head{ width:100%; display:flex; align-items:center; gap:12px; padding:14px 18px; background:none; border:none; cursor:pointer; text-align:left; font: inherit; color: inherit; }
+  .acc-head:hover{ background: var(--surface-2); }
+  .acc-head .swatch{ width:12px; height:12px; border-radius:3px; }
+  .acc-head .ag-name{ font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; flex:1; }
+  .acc-head .ag-total{ font-size:15px; font-weight:600; }
+  .acc-head .ag-pct{ color: var(--muted); font-size:12.5px; width:52px; text-align:right; }
+  .acc-head .chev{ transition: transform .15s ease; color: var(--muted); }
+  .acc-group.open .chev{ transform: rotate(90deg); }
+  .acc-body{ display:none; padding: 4px 18px 14px 42px; }
+  .acc-group.open .acc-body{ display:block; }
+  .sub-row{ display:grid; grid-template-columns: 1fr 90px 116px; gap:10px; align-items:center; padding:6px 0; border-top: 1px solid var(--line); }
+  .sub-row:first-child{ border-top:none; }
+  .sub-row .sr-name{ font-size:13px; color: var(--ink-2); }
+  .sub-row .sr-bar-wrap{ position:relative; height:8px; background:var(--surface-2); border-radius:3px; }
+  .sub-row .sr-bar{ position:absolute; left:0; top:0; height:100%; border-radius:3px; }
+  .sub-row .sr-value{ font-size:12.5px; text-align:right; white-space:nowrap; }
+
+  /* ---------- result card ---------- */
+  .result-card{ display:grid; grid-template-columns: repeat(3, 1fr); gap:0; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow: var(--shadow); }
+  .result-cell{ background:var(--surface); padding:22px 24px; border-left:1px solid var(--line); }
+  .result-cell:first-child{ border-left:none; }
+  @media (max-width:720px){ .result-card{ grid-template-columns:1fr; } .result-cell{ border-left:none; border-top:1px solid var(--line);} .result-cell:first-child{border-top:none;} }
+  .result-cell .rc-label{ font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600; margin-bottom:8px; }
+  .result-cell .rc-value{ font-size:28px; font-weight:600; }
+  .result-cell .rc-value.critical{ color:var(--critical); }
+  .result-note{ padding:14px 24px; background: var(--critical-bg); color: var(--critical); font-size:13px; border-top:1px solid var(--line); grid-column: 1 / -1; }
+
+  /* ---------- suppliers ---------- */
+  .supplier-row{ display:grid; grid-template-columns: 1fr 1fr 70px; gap:10px; align-items:center; padding:7px 0; border-top:1px solid var(--line); }
+  .supplier-row:first-child{ border-top:none; }
+  .supplier-row .sp-name{ font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .supplier-row .sp-track{ position:relative; height:14px; background:var(--surface-2); border-radius:3px; }
+  .supplier-row .sp-fill{ position:absolute; left:0; top:0; height:100%; background: var(--cat-1); border-radius:3px; }
+  .supplier-row .sp-qtd{ font-size:11.5px; color:var(--muted); text-align:right; }
+
+  /* ---------- filters ---------- */
+  .filters{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+  .filters select, .filters input[type="search"]{
+    font: inherit; font-size:13.5px; background: var(--surface); color: var(--ink);
+    border:1px solid var(--line-strong); border-radius:7px; padding:8px 10px;
+  }
+  .filters input[type="search"]{ min-width:220px; flex:1; }
+  .filters select:focus, .filters input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .chip-toggle{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2); background:var(--chip-bg); border:1px solid var(--line); border-radius:20px; padding:6px 12px; cursor:pointer; user-select:none; }
+  .chip-toggle input{ accent-color: var(--accent); }
+
+  /* ---------- table ---------- */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:12px; box-shadow: var(--shadow); }
+  table{ width:100%; border-collapse:collapse; background:var(--surface); min-width: 760px; }
+  thead th{ position:sticky; top:0; background: var(--surface-2); text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; color: var(--muted); padding:10px 14px; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap; }
+  thead th:hover{ color:var(--ink); }
+  thead th.sorted::after{ content:" \25BE"; }
+  thead th.sorted.asc::after{ content:" \25B4"; }
+  tbody td{ padding:9px 14px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:hover{ background: var(--surface-2); }
+  td.num{ text-align:right; white-space:nowrap; }
+  td.date{ white-space:nowrap; color: var(--ink-2); }
+  .cat-badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; white-space:nowrap; }
+  .cat-badge .swatch{ width:8px; height:8px; border-radius:2px; }
+  tfoot td{ padding:11px 14px; font-weight:600; background: var(--surface-2); border-top: 2px solid var(--ink); }
+  .empty-row td{ text-align:center; color:var(--muted); padding:26px; }
+
+  footer{ margin-top:48px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="eyebrow">Triáde Pavimentação · Ata PMSP 2025–2027 · Obra 20</div>
+    <h1>Painel de Custos</h1>
+    <div class="sub">
+      <span>Período: <b id="meta-periodo">—</b></span>
+      <span>Base: <b id="meta-fonte">—</b></span>
+      <span>Atualizado em <b id="meta-atualizado">—</b></span>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpi-row"></div>
+
+  <section id="sec-resultado">
+    <div class="section-head">
+      <h2>Resultado do período</h2>
+      <div class="desc">Receita reconhecida vs. custo incorrido na Obra 20</div>
+    </div>
+    <div class="result-card" id="result-card"></div>
+  </section>
+
+  <section id="sec-categorias">
+    <div class="section-head">
+      <h2>Despesas por tipo</h2>
+      <div class="desc">Ranking de custo por categoria e evolução mensal</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div id="rankbar-chart"></div>
+      </div>
+      <div class="card">
+        <div class="legend" id="stack-legend"></div>
+        <div class="stackchart" id="stack-chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sec-detalhe">
+    <div class="section-head">
+      <h2>Detalhamento por categoria</h2>
+      <div class="desc">Clique em uma categoria para abrir os itens que a compõem</div>
+    </div>
+    <div class="acc" id="acc-list"></div>
+  </section>
+
+  <section id="sec-fornecedores">
+    <div class="section-head">
+      <h2>Principais fornecedores</h2>
+      <div class="desc">Top 10 por valor pago no período</div>
+    </div>
+    <div class="card" id="supplier-list"></div>
+  </section>
+
+  <section id="sec-lancamentos">
+    <div class="section-head">
+      <h2>Lançamentos detalhados</h2>
+      <div class="desc">Filtre por mês, categoria ou fornecedor para conferir cada pagamento</div>
+    </div>
+    <div class="filters">
+      <select id="f-mes"></select>
+      <select id="f-cat"></select>
+      <input type="search" id="f-busca" placeholder="Buscar fornecedor ou histórico…">
+      <label class="chip-toggle"><input type="checkbox" id="f-mov"> Incluir movimentações financeiras</label>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="data">Pagamento</th>
+            <th data-key="fornecedor">Fornecedor</th>
+            <th data-key="historico">Histórico</th>
+            <th data-key="categoria">Categoria</th>
+            <th data-key="valor" class="num">Valor pago</th>
+          </tr>
+        </thead>
+        <tbody id="tx-body"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Total filtrado (<span id="tx-count">0</span> lançamentos)</td>
+            <td class="num tabular" id="tx-total">R$ 0,00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Fonte: planilha de custos da Obra 20 · atualizada pela equipe de controladoria.</span>
+    <span id="footer-gen">—</span>
+  </footer>
+
+</div>
+
+<div class="viztip" id="viztip"></div>
+
+<script id="site-data" type="application/json">__SITE_DATA_JSON__</script>
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById('site-data').textContent);
+
+  function fmtBRL(n){
+    var neg = n < 0;
+    n = Math.abs(n);
+    var s = n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    return (neg ? '-R$ ' : 'R$ ') + s;
+  }
+  function fmtDate(iso){
+    if(!iso) return '—';
+    var p = iso.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+  function pct(part, whole){
+    if(!whole) return '0%';
+    return (part/whole*100).toLocaleString('pt-BR', {maximumFractionDigits:1}) + '%';
+  }
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  var tip = document.getElementById('viztip');
+  function showTip(x, y, titleText, valueText){
+    tip.innerHTML = '';
+    var v = el('div','t-val'); v.textContent = valueText;
+    var k = el('div','t-key'); k.textContent = titleText;
+    tip.appendChild(v); tip.appendChild(k);
+    tip.style.left = x + 'px';
+    tip.style.top = (y - 10) + 'px';
+    tip.classList.add('show');
+  }
+  function hideTip(){ tip.classList.remove('show'); }
+
+  // ---------------- meta ----------------
+  document.getElementById('meta-periodo').textContent = DATA.meta.periodo;
+  document.getElementById('meta-fonte').textContent = DATA.meta.sourceFile;
+  document.getElementById('meta-atualizado').textContent = DATA.meta.generatedAt;
+  document.getElementById('footer-gen').textContent = 'Dados extraídos em ' + DATA.meta.generatedAt;
+
+  // ---------------- KPIs ----------------
+  var kpiRow = document.getElementById('kpi-row');
+  var kpiDefs = [
+    { label:'Custo total incorrido', value: fmtBRL(DATA.kpis.custoTotal) },
+    { label:'Receita reconhecida', value: fmtBRL(DATA.kpis.receitaBruta), note:'Ainda não faturado no período' },
+    { label:'Resultado do período', value: fmtBRL(DATA.kpis.resultado), cls:'critical' },
+    { label:'Lançamentos de despesa', value: DATA.kpis.numLancamentos.toLocaleString('pt-BR') },
+    { label:'Fornecedores ativos', value: DATA.kpis.fornecedoresAtivos.toLocaleString('pt-BR') },
+    { label:'Ticket médio', value: fmtBRL(DATA.kpis.ticketMedio) }
+  ];
+  kpiDefs.forEach(function(k){
+    var tile = el('div','kpi');
+    tile.appendChild(el('div','label', k.label));
+    var v = el('div','value tabular' + (k.cls? ' '+k.cls:''), k.value);
+    tile.appendChild(v);
+    if(k.note) tile.appendChild(el('div','note', k.note));
+    kpiRow.appendChild(tile);
+  });
+
+  // ---------------- resultado card ----------------
+  var rc = document.getElementById('result-card');
+  var cells = [
+    { label:'Custo Canteiro (incorrido)', value: fmtBRL(DATA.kpis.custoTotal) },
+    { label:'Receita bruta reconhecida', value: fmtBRL(DATA.kpis.receitaBruta) },
+    { label:'Resultado (Lucro Bruto)', value: fmtBRL(DATA.kpis.resultado), cls:'critical' }
+  ];
+  cells.forEach(function(c){
+    var cell = el('div','result-cell');
+    cell.appendChild(el('div','rc-label', c.label));
+    cell.appendChild(el('div','rc-value tabular' + (c.cls?' '+c.cls:''), c.value));
+    rc.appendChild(cell);
+  });
+  var note = el('div','result-note', 'A Ata ainda não teve medições faturadas neste período — todo o valor incorrido está registrado como custo em aberto, sem contrapartida de receita.');
+  rc.appendChild(note);
+
+  // ---------------- ranked bar chart (macro categories) ----------------
+  var macro = DATA.macroCategories.slice().sort(function(a,b){ return b.total - a.total; });
+  var maxMacro = macro[0] ? macro[0].total : 1;
+  var rankWrap = document.getElementById('rankbar-chart');
+  var rankTitle = document.createElement('div');
+  rankTitle.style.fontFamily = '"Oswald",sans-serif';
+  rankTitle.style.fontSize = '13px';
+  rankTitle.style.letterSpacing = '0.06em';
+  rankTitle.style.textTransform = 'uppercase';
+  rankTitle.style.color = 'var(--ink-2)';
+  rankTitle.style.marginBottom = '10px';
+  rankTitle.textContent = 'Custo por categoria — total do período';
+  rankWrap.appendChild(rankTitle);
+
+  macro.forEach(function(m){
+    var row = el('div','rankbar-row');
+    row.appendChild(el('div','rb-label', m.name));
+    var track = el('div','rankbar-track');
+    var fill = el('div','rankbar-fill');
+    fill.style.width = (m.total/maxMacro*100) + '%';
+    fill.style.background = m.color;
+    track.appendChild(fill);
+    track.tabIndex = 0;
+    track.addEventListener('mousemove', function(e){
+      showTip(e.clientX, e.clientY, m.name, fmtBRL(m.total) + ' · ' + pct(m.total, DATA.kpis.custoTotal));
+    });
+    track.addEventListener('mouseleave', hideTip);
+    row.appendChild(track);
+    var valWrap = el('div','rb-value tabular');
+    valWrap.appendChild(document.createTextNode(fmtBRL(m.total)));
+    var pctSpan = el('span','rb-pct');
+    pctSpan.textContent = ' · ' + pct(m.total, DATA.kpis.custoTotal);
+    valWrap.appendChild(pctSpan);
+    row.appendChild(valWrap);
+    rankWrap.appendChild(row);
+  });
+
+  // ---------------- stacked monthly chart ----------------
+  var legendWrap = document.getElementById('stack-legend');
+  DATA.macroCategories.forEach(function(m){
+    var item = el('div','legend-item');
+    var sw = el('span','swatch'); sw.style.background = m.color;
+    item.appendChild(sw);
+    item.appendChild(document.createTextNode(m.name));
+    legendWrap.appendChild(item);
+  });
+
+  var stackWrap = document.getElementById('stack-chart');
+  var monthMax = 0;
+  DATA.meta.monthKeys.forEach(function(mk){
+    var sum = 0;
+    DATA.macroCategories.forEach(function(m){ sum += (m.months[mk]||0); });
+    if(sum > monthMax) monthMax = sum;
+  });
+  DATA.meta.monthKeys.forEach(function(mk){
+    var col = el('div','stack-col');
+    var sum = 0;
+    DATA.macroCategories.forEach(function(m){ sum += (m.months[mk]||0); });
+    col.appendChild(el('div','stack-total tabular', sum ? fmtBRL(sum) : '—'));
+    var bar = el('div','stack-bar');
+    var barHeight = monthMax ? (sum/monthMax*180) : 0;
+    bar.style.height = Math.max(barHeight, sum>0?2:0) + 'px';
+    DATA.macroCategories.forEach(function(m){
+      var v = m.months[mk] || 0;
+      if(v <= 0) return;
+      var seg = el('div','stack-seg');
+      var segH = sum ? (v/sum*100) : 0;
+      seg.style.height = segH + '%';
+      seg.style.background = m.color;
+      seg.addEventListener('mousemove', function(e){
+        showTip(e.clientX, e.clientY, m.name, fmtBRL(v));
+      });
+      seg.addEventListener('mouseleave', hideTip);
+      bar.appendChild(seg);
+    });
+    col.appendChild(bar);
+    col.appendChild(el('div','stack-label', DATA.meta.monthLabels[mk]));
+    stackWrap.appendChild(col);
+  });
+
+  // ---------------- accordion detail ----------------
+  var accList = document.getElementById('acc-list');
+  var maxSub = 0;
+  DATA.subCategories.forEach(function(s){ if(s.total > maxSub) maxSub = s.total; });
+  macro.forEach(function(m, idx){
+    var group = el('div','acc-group' + (idx===0 ? ' open' : ''));
+    var head = document.createElement('button');
+    head.className = 'acc-head';
+    head.type = 'button';
+    var sw = el('span','swatch'); sw.style.background = m.color;
+    head.appendChild(sw);
+    head.appendChild(el('span','ag-name', m.name));
+    head.appendChild(el('span','ag-total tabular', fmtBRL(m.total)));
+    head.appendChild(el('span','ag-pct', pct(m.total, DATA.kpis.custoTotal)));
+    var chev = el('span','chev', '▸');
+    head.appendChild(chev);
+    head.addEventListener('click', function(){ group.classList.toggle('open'); });
+    group.appendChild(head);
+
+    var body = el('div','acc-body');
+    var subs = DATA.subCategories.filter(function(s){ return s.macroId === m.id; }).sort(function(a,b){ return b.total - a.total; });
+    subs.forEach(function(s){
+      var row = el('div','sub-row');
+      row.appendChild(el('div','sr-name', s.name));
+      var wrap = el('div','sr-bar-wrap');
+      var bar = el('div','sr-bar');
+      bar.style.width = (maxSub ? (s.total/maxSub*100) : 0) + '%';
+      bar.style.background = s.color;
+      wrap.appendChild(bar);
+      row.appendChild(wrap);
+      row.appendChild(el('div','sr-value tabular', fmtBRL(s.total)));
+      body.appendChild(row);
+    });
+    group.appendChild(body);
+    accList.appendChild(group);
+  });
+
+  // ---------------- top suppliers ----------------
+  var supWrap = document.getElementById('supplier-list');
+  var maxSup = DATA.topFornecedores[0] ? DATA.topFornecedores[0].total : 1;
+  DATA.topFornecedores.forEach(function(s){
+    var row = el('div','supplier-row');
+    row.appendChild(el('div','sp-name', s.fornecedor));
+    var track = el('div','sp-track');
+    var fill = el('div','sp-fill');
+    fill.style.width = (s.total/maxSup*100) + '%';
+    track.appendChild(fill);
+    track.addEventListener('mousemove', function(e){ showTip(e.clientX, e.clientY, s.fornecedor, fmtBRL(s.total)); });
+    track.addEventListener('mouseleave', hideTip);
+    row.appendChild(track);
+    row.appendChild(el('div','sp-qtd tabular', fmtBRL(s.total) + ' · ' + s.qtd + 'x'));
+    supWrap.appendChild(row);
+  });
+
+  // ---------------- transactions table ----------------
+  var fMes = document.getElementById('f-mes');
+  fMes.appendChild(el('option', null, 'Todos os meses')).value = '';
+  DATA.meta.monthKeys.forEach(function(mk){
+    var o = el('option', null, DATA.meta.monthLabels[mk] + '/2026');
+    o.value = mk;
+    fMes.appendChild(o);
+  });
+
+  var catSet = {};
+  DATA.transactions.forEach(function(t){ catSet[t.categoria] = t.categoriaColor; });
+  var fCat = document.getElementById('f-cat');
+  fCat.appendChild(el('option', null, 'Todas as categorias')).value = '';
+  Object.keys(catSet).sort().forEach(function(c){
+    var o = el('option', null, c); o.value = c; fCat.appendChild(o);
+  });
+
+  var fBusca = document.getElementById('f-busca');
+  var fMov = document.getElementById('f-mov');
+  var txBody = document.getElementById('tx-body');
+  var txCount = document.getElementById('tx-count');
+  var txTotal = document.getElementById('tx-total');
+  var ths = document.querySelectorAll('thead th[data-key]');
+  var sortKey = 'data', sortAsc = true;
+
+  function currentRows(){
+    var mes = fMes.value, cat = fCat.value, busca = fBusca.value.trim().toLowerCase(), incMov = fMov.checked;
+    return DATA.transactions.filter(function(t){
+      if(!incMov && !t.isExpense) return false;
+      if(mes && t.mesKey !== mes) return false;
+      if(cat && t.categoria !== cat) return false;
+      if(busca){
+        var hay = (t.fornecedor + ' ' + t.historico).toLowerCase();
+        if(hay.indexOf(busca) === -1) return false;
+      }
+      return true;
+    }).sort(function(a,b){
+      var av = a[sortKey], bv = b[sortKey];
+      var r;
+      if(typeof av === 'number'){ r = av - bv; } else { r = String(av).localeCompare(String(bv), 'pt-BR'); }
+      return sortAsc ? r : -r;
+    });
+  }
+
+  function renderTable(){
+    var rows = currentRows();
+    txBody.innerHTML = '';
+    if(rows.length === 0){
+      var tr = el('tr','empty-row');
+      var td = el('td', null, 'Nenhum lançamento encontrado para os filtros selecionados.');
+      td.colSpan = 5;
+      tr.appendChild(td);
+      txBody.appendChild(tr);
+    } else {
+      rows.forEach(function(t){
+        var tr = document.createElement('tr');
+        tr.appendChild(el('td','date', fmtDate(t.data)));
+        tr.appendChild(el('td', null, t.fornecedor));
+        tr.appendChild(el('td', null, t.historico || '—'));
+        var catTd = document.createElement('td');
+        var badge = el('span','cat-badge');
+        var sw = el('span','swatch'); sw.style.background = t.categoriaColor;
+        badge.appendChild(sw);
+        badge.appendChild(document.createTextNode(t.categoria));
+        catTd.appendChild(badge);
+        tr.appendChild(catTd);
+        tr.appendChild(el('td','num tabular', fmtBRL(t.valor)));
+        txBody.appendChild(tr);
+      });
+    }
+    var total = rows.reduce(function(s,t){ return s + t.valor; }, 0);
+    txCount.textContent = rows.length.toLocaleString('pt-BR');
+    txTotal.textContent = fmtBRL(total);
+
+    ths.forEach(function(th){
+      th.classList.toggle('sorted', th.dataset.key === sortKey);
+      th.classList.toggle('asc', th.dataset.key === sortKey && sortAsc);
+    });
+  }
+
+  ths.forEach(function(th){
+    th.addEventListener('click', function(){
+      var key = th.dataset.key;
+      if(sortKey === key){ sortAsc = !sortAsc; } else { sortKey = key; sortAsc = key === 'data' ? false : true; }
+      renderTable();
+    });
+  });
+  [fMes, fCat, fMov].forEach(function(ctrl){ ctrl.addEventListener('change', renderTable); });
+  fBusca.addEventListener('input', renderTable);
+
+  sortKey = 'data'; sortAsc = false;
+  renderTable();
+
+})();
+</script>
