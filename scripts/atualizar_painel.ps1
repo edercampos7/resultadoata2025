@@ -152,11 +152,21 @@ foreach ($t in $rawTx) {
     $isExpense = [bool]$macroMatch
     $subName = $null
     if ($isExpense -and $idToDesc.ContainsKey($t.idCode)) { $subName = $idToDesc[$t.idCode] }
+    # a "categoria" exibida por lancamento segue a coluna DESCRICAO da planilha
+    # (nivel do ID especifico, ex: "Salarios"); o macro-grupo (Mao de Obra etc.)
+    # fica reservado para os graficos agregados, via macroId.
+    $displayCategoria = $categoriaLabel
+    $displayColor = $categoriaColor
+    if ($isExpense) {
+        $displayCategoria = $(if ($subName) { $subName } else { $macroMatch.name })
+        $displayColor = $macroMatch.color
+    }
     $transactions.Add([pscustomobject]@{
         data = $t.pagamento; mesAno = $t.mesAno; mesKey = $mesAnoToKey[$t.mesAno]
         fornecedor = $t.fornecedor; historico = $t.historico; idCode = $t.idCode
         subCategoria = $subName; macroId = $(if ($macroMatch) { $macroMatch.id } else { $null })
-        categoria = $categoriaLabel; categoriaColor = $categoriaColor
+        macroName = $(if ($macroMatch) { $macroMatch.name } else { $null })
+        categoria = $displayCategoria; categoriaColor = $displayColor
         isExpense = $isExpense; valor = [math]::Round($t.valorPago, 2)
     })
 }
