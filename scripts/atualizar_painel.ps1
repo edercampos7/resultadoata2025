@@ -216,7 +216,9 @@ $json = $json.Replace('</script', '<\/script')
 
 $templatePath = Join-Path $PSScriptRoot "template.html"
 $tpl = [System.IO.File]::ReadAllText($templatePath, $utf8)
-$final = $tpl.Replace('__SITE_DATA_JSON__', $json)
+$logoB64Path = Join-Path $PSScriptRoot "logo_base64.txt"
+$logoB64 = [System.IO.File]::ReadAllText($logoB64Path, [System.Text.Encoding]::ASCII)
+$final = $tpl.Replace('__SITE_DATA_JSON__', $json).Replace('__LOGO_BASE64__', $logoB64)
 $outPath = Join-Path $ProjectDir "painel-custos-obra20.html"
 [System.IO.File]::WriteAllText($outPath, $final, $utf8)
 
