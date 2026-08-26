@@ -286,7 +286,8 @@
     </div>
     <div class="filters">
       <select id="f-mes"></select>
-      <select id="f-cat"></select>
+      <select id="f-macro"></select>
+      <select id="f-sub"></select>
       <input type="search" id="f-busca" placeholder="Buscar fornecedor ou histórico…">
       <label class="chip-toggle"><input type="checkbox" id="f-mov"> Incluir movimentações financeiras</label>
     </div>
@@ -545,13 +546,51 @@
     fMes.appendChild(o);
   });
 
-  var catSet = {};
-  DATA.transactions.forEach(function(t){ catSet[t.categoria] = t.categoriaColor; });
-  var fCat = document.getElementById('f-cat');
-  fCat.appendChild(el('option', null, 'Todas as categorias')).value = '';
-  Object.keys(catSet).sort().forEach(function(c){
-    var o = el('option', null, c); o.value = c; fCat.appendChild(o);
+  // macro-grupo (2.2.1 Mão de Obra, 2.2.2 Materiais, ...) + um grupo para
+  // movimentações financeiras que não têm ID no plano de contas
+  var TREASURY_GROUP = 'Movimentação Financeira';
+  DATA.transactions.forEach(function(t){ if(!t.macroName) t.macroName = TREASURY_GROUP; });
+  var macroNames = DATA.macroCategories.map(function(m){ return m.name; });
+  macroNames.push(TREASURY_GROUP);
+
+  var itemsByMacro = {};
+  DATA.transactions.forEach(function(t){
+    if(!itemsByMacro[t.macroName]) itemsByMacro[t.macroName] = {};
+    itemsByMacro[t.macroName][t.categoria] = true;
   });
+
+  var fMacro = document.getElementById('f-macro');
+  fMacro.appendChild(el('option', null, 'Todas as categorias')).value = '';
+  macroNames.forEach(function(mn){
+    var o = el('option', null, mn); o.value = mn; fMacro.appendChild(o);
+  });
+
+  var fSub = document.getElementById('f-sub');
+  function buildSubOptions(){
+    var macro = fMacro.value;
+    var keep = fSub.value;
+    fSub.innerHTML = '';
+    fSub.appendChild(el('option', null, 'Todos os itens')).value = '';
+    if(macro){
+      Object.keys(itemsByMacro[macro] || {}).sort(function(a,b){ return a.localeCompare(b,'pt-BR'); }).forEach(function(item){
+        var o = el('option', null, item); o.value = item; fSub.appendChild(o);
+      });
+    } else {
+      macroNames.forEach(function(mn){
+        var items = Object.keys(itemsByMacro[mn] || {}).sort(function(a,b){ return a.localeCompare(b,'pt-BR'); });
+        if(items.length === 0) return;
+        var grp = document.createElement('optgroup');
+        grp.label = mn;
+        items.forEach(function(item){
+          var o = el('option', null, item); o.value = item; grp.appendChild(o);
+        });
+        fSub.appendChild(grp);
+      });
+    }
+    if(Array.from(fSub.options).some(function(o){ return o.value === keep; })) fSub.value = keep;
+  }
+  buildSubOptions();
+  fMacro.addEventListener('change', function(){ buildSubOptions(); renderTable(); });
 
   var fBusca = document.getElementById('f-busca');
   var fMov = document.getElementById('f-mov');
@@ -562,11 +601,12 @@
   var sortKey = 'data', sortAsc = true;
 
   function currentRows(){
-    var mes = fMes.value, cat = fCat.value, busca = fBusca.value.trim().toLowerCase(), incMov = fMov.checked;
+    var mes = fMes.value, macro = fMacro.value, sub = fSub.value, busca = fBusca.value.trim().toLowerCase(), incMov = fMov.checked;
     return DATA.transactions.filter(function(t){
-      if(!incMov && !t.isExpense) return false;
+      if(!incMov && !t.isExpense && macro !== TREASURY_GROUP) return false;
       if(mes && t.mesKey !== mes) return false;
-      if(cat && t.categoria !== cat) return false;
+      if(macro && t.macroName !== macro) return false;
+      if(sub && t.categoria !== sub) return false;
       if(busca){
         var hay = (t.fornecedor + ' ' + t.historico).toLowerCase();
         if(hay.indexOf(busca) === -1) return false;
@@ -623,7 +663,7 @@
       renderTable();
     });
   });
-  [fMes, fCat, fMov].forEach(function(ctrl){ ctrl.addEventListener('change', renderTable); });
+  [fMes, fSub, fMov].forEach(function(ctrl){ ctrl.addEventListener('change', renderTable); });
   fBusca.addEventListener('input', renderTable);
 
   sortKey = 'data'; sortAsc = false;
