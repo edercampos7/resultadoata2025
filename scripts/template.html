@@ -124,6 +124,12 @@
   .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
   .section-head h2{ font-size:19px; }
   .section-head .desc{ color: var(--muted); font-size:13px; }
+  .section-title-row{ display:flex; align-items:center; gap:10px; }
+  .section-toggle{ display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; padding:0; border:1px solid var(--line-strong); background:var(--surface); border-radius:6px; color:var(--ink-2); cursor:pointer; flex:none; }
+  .section-toggle:hover{ background:var(--surface-2); color:var(--ink); }
+  .section-toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  .section-toggle svg{ width:14px; height:14px; transition: transform .15s ease; }
+  .section-toggle[aria-expanded="false"] svg{ transform: rotate(-90deg); }
 
   .card{ background: var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px; box-shadow: var(--shadow); }
 
@@ -284,7 +290,12 @@
 
   <section id="sec-fornecedores">
     <div class="section-head">
-      <h2>Principais fornecedores</h2>
+      <div class="section-title-row">
+        <h2>Principais fornecedores</h2>
+        <button class="section-toggle" type="button" id="supplier-toggle" aria-expanded="true" aria-controls="supplier-list" title="Minimizar/expandir">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
       <div class="desc">Top 10 por valor pago no período</div>
     </div>
     <div class="card" id="supplier-list"></div>
@@ -576,6 +587,22 @@
     row.appendChild(track);
     row.appendChild(el('div','sp-qtd tabular', fmtBRL(s.total) + ' · ' + s.qtd + 'x'));
     supWrap.appendChild(row);
+  });
+
+  // ---------------- collapse/expand: principais fornecedores ----------------
+  var supToggle = document.getElementById('supplier-toggle');
+  var STORAGE_KEY = 'painel-custos-fornecedores-collapsed';
+  var supCollapsed = false;
+  try { supCollapsed = localStorage.getItem(STORAGE_KEY) === '1'; } catch(e){}
+  function applySupplierState(){
+    supWrap.style.display = supCollapsed ? 'none' : '';
+    supToggle.setAttribute('aria-expanded', String(!supCollapsed));
+  }
+  applySupplierState();
+  supToggle.addEventListener('click', function(){
+    supCollapsed = !supCollapsed;
+    applySupplierState();
+    try { localStorage.setItem(STORAGE_KEY, supCollapsed ? '1' : '0'); } catch(e){}
   });
 
   // ---------------- transactions table ----------------
