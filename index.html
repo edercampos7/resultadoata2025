@@ -17,6 +17,7 @@
     --accent: #b5661a;
     --accent-ink: #fff8ef;
     --good: #0ca30c;
+    --good-bg: #e8f5e3;
     --critical: #b3261e;
     --critical-bg: #fbe9e6;
     --chip-bg: #efe9dc;
@@ -42,6 +43,7 @@
       --accent: #e0973f;
       --accent-ink: #1c1811;
       --good: #35c440;
+      --good-bg: #17301a;
       --critical: #ff8a75;
       --critical-bg: #3a1c17;
       --chip-bg: #241f16;
@@ -67,6 +69,7 @@
     --accent: #e0973f;
     --accent-ink: #1c1811;
     --good: #35c440;
+    --good-bg: #17301a;
     --critical: #ff8a75;
     --critical-bg: #3a1c17;
     --chip-bg: #241f16;
@@ -107,7 +110,11 @@
   /* ---------- KPI row ---------- */
   .kpis{ display:grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap:1px; background: var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:32px; box-shadow: var(--shadow); }
   .kpi{ background: var(--surface); padding:16px 18px; display:flex; flex-direction:column; gap:6px; min-height: 96px; }
-  .kpi .label{ font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em; color: var(--muted); font-weight:600; }
+  .kpi .label{ font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em; color: var(--muted); font-weight:600; display:flex; align-items:center; gap:6px; }
+  .kpi .label .icon{ width:15px; height:15px; flex:none; color: var(--accent); }
+  .kpi .label .icon.good{ color: var(--good); }
+  .kpi .label .icon.critical{ color: var(--critical); }
+  .kpi .label .icon svg{ display:block; width:100%; height:100%; }
   .kpi .value{ font-size: 20px; line-height:1.2; font-weight:600; font-family:"IBM Plex Sans", sans-serif; white-space:nowrap; }
   .kpi .value.critical{ color: var(--critical); }
   .kpi .value.good{ color: var(--good); }
@@ -176,10 +183,14 @@
   .result-cell{ background:var(--surface); padding:22px 24px; border-left:1px solid var(--line); }
   .result-cell:first-child{ border-left:none; }
   @media (max-width:720px){ .result-card{ grid-template-columns:1fr; } .result-cell{ border-left:none; border-top:1px solid var(--line);} .result-cell:first-child{border-top:none;} }
-  .result-cell .rc-label{ font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600; margin-bottom:8px; }
+  .result-cell .rc-label{ font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .result-cell .rc-label .icon{ width:14px; height:14px; flex:none; }
+  .result-cell .rc-label .icon svg{ display:block; width:100%; height:100%; }
   .result-cell .rc-value{ font-size:28px; font-weight:600; }
   .result-cell .rc-value.critical{ color:var(--critical); }
+  .result-cell .rc-value.good{ color:var(--good); }
   .result-note{ padding:14px 24px; background: var(--critical-bg); color: var(--critical); font-size:13px; border-top:1px solid var(--line); grid-column: 1 / -1; }
+  .result-note.good{ background: var(--good-bg); color: var(--good); }
 
   /* ---------- suppliers ---------- */
   .supplier-row{ display:grid; grid-template-columns: 1fr 1fr 70px; gap:10px; align-items:center; padding:7px 0; border-top:1px solid var(--line); }
@@ -324,7 +335,7 @@
 
 <script id="site-data" type="application/json">{
     "meta":  {
-                 "generatedAt":  "27/08/2026 11:14",
+                 "generatedAt":  "27/08/2026 11:42",
                  "sourceFile":  "Resultado Financeiro ATA 2025.xlsx",
                  "periodo":  "Fev a Jul de 2026",
                  "monthKeys":  [
@@ -345,12 +356,12 @@
                                  }
              },
     "kpis":  {
-                 "custoTotal":  8881015.24,
-                 "receitaBruta":  0,
-                 "resultado":  -8881015.24,
-                 "numLancamentos":  620,
-                 "fornecedoresAtivos":  109,
-                 "ticketMedio":  14324.22
+                 "receitaLiquida":  9619155.18,
+                 "custosReceitaCanteiro":  508393.11,
+                 "custosOperacionais":  8880699.45,
+                 "custoCanteiro":  9389092.56,
+                 "resultado":  230062.61999999918,
+                 "margemCanteiro":  0.023917133645825973
              },
     "macroCategories":  [
                             {
@@ -361,8 +372,8 @@
                                 "months":  {
                                                "2026-02":  0,
                                                "2026-03":  131457.53,
-                                               "2026-04":  146092.39,
-                                               "2026-05":  296510.13,
+                                               "2026-04":  146092.38999999998,
+                                               "2026-05":  296510.12999999995,
                                                "2026-06":  266054.58,
                                                "2026-07":  291270.02
                                            }
@@ -376,9 +387,9 @@
                                                "2026-02":  0,
                                                "2026-03":  25806.59,
                                                "2026-04":  530991.62,
-                                               "2026-05":  1190352.19,
-                                               "2026-06":  1797577.04,
-                                               "2026-07":  280863.72
+                                               "2026-05":  1195262.04,
+                                               "2026-06":  1793097.9300000002,
+                                               "2026-07":  280432.98000000004
                                            }
                             },
                             {
@@ -390,8 +401,8 @@
                                                "2026-02":  0,
                                                "2026-03":  0,
                                                "2026-04":  168408.04,
-                                               "2026-05":  504751.64,
-                                               "2026-06":  847115.07,
+                                               "2026-05":  504751.63999999996,
+                                               "2026-06":  847115.07000000007,
                                                "2026-07":  1362237.63
                                            }
                             },
@@ -402,125 +413,29 @@
                                 "total":  985411.79,
                                 "months":  {
                                                "2026-02":  0,
-                                               "2026-03":  0,
-                                               "2026-04":  191857.48,
-                                               "2026-05":  203258.86,
-                                               "2026-06":  254325.52,
-                                               "2026-07":  335969.93
+                                               "2026-03":  1602.1399999999999,
+                                               "2026-04":  190255.34000000003,
+                                               "2026-05":  211592.19,
+                                               "2026-06":  245992.18999999997,
+                                               "2026-07":  335969.93000000005
                                            }
                             },
                             {
                                 "id":  "2.2.5",
                                 "name":  "Despesas Administrativas",
                                 "color":  "#e87ba4",
-                                "total":  56115.26,
+                                "total":  55799.469999999994,
                                 "months":  {
-                                               "2026-02":  1782.75,
-                                               "2026-03":  4512.45,
+                                               "2026-02":  2157.86,
+                                               "2026-03":  3821.5499999999997,
                                                "2026-04":  8461.56,
                                                "2026-05":  15645.91,
                                                "2026-06":  11734.82,
-                                               "2026-07":  13977.77
+                                               "2026-07":  13977.769999999999
                                            }
                             }
                         ],
     "subCategories":  [
-                          {
-                              "id":  "2.2.5.9",
-                              "name":  "Associações de Classes e ARTs",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  6302.25
-                          },
-                          {
-                              "id":  "2.2.5.2",
-                              "name":  "TPOV e DAMSP",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  4338.81
-                          },
-                          {
-                              "id":  "2.2.5.3",
-                              "name":  "Garantias e seguros",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  732.51
-                          },
-                          {
-                              "id":  "2.2.2.6",
-                              "name":  "Contas de Consumo",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  28970.69
-                          },
-                          {
-                              "id":  "2.2.2.10",
-                              "name":  "Locação banheiro quimico - guaritas",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  17400
-                          },
-                          {
-                              "id":  "2.2.5.10",
-                              "name":  "Equip. e materiais de Informatica/escritório",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  15573.75
-                          },
-                          {
-                              "id":  "2.2.1.16",
-                              "name":  "Exames admissionais / Demissionais",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  13098.36
-                          },
-                          {
-                              "id":  "2.2.2.8",
-                              "name":  "Materiais de Sinalização",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  6300
-                          },
-                          {
-                              "id":  "2.2.5.11",
-                              "name":  "Tarifas Bancarias",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  1411.7
-                          },
-                          {
-                              "id":  "2.2.5.5",
-                              "name":  "Serviços Contabeis",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  15012.05
-                          },
-                          {
-                              "id":  "2.2.1.2",
-                              "name":  "Rescições",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  56264.11
-                          },
-                          {
-                              "id":  "2.2.1.10",
-                              "name":  "Vale Transporte",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  44512.53
-                          },
                           {
                               "id":  "2.2.1.1",
                               "name":  "Salários",
@@ -530,12 +445,12 @@
                               "total":  434687.49
                           },
                           {
-                              "id":  "2.2.1.6",
-                              "name":  "FGTS",
+                              "id":  "2.2.1.2",
+                              "name":  "Rescições",
                               "macroId":  "2.2.1",
                               "macroName":  "Mão de Obra",
                               "color":  "#2a78d6",
-                              "total":  60814.1
+                              "total":  56264.109999999993
                           },
                           {
                               "id":  "2.2.1.3",
@@ -543,7 +458,15 @@
                               "macroId":  "2.2.1",
                               "macroName":  "Mão de Obra",
                               "color":  "#2a78d6",
-                              "total":  2910.12
+                              "total":  2910.1200000000003
+                          },
+                          {
+                              "id":  "2.2.1.4",
+                              "name":  "Indiretos - PJ",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  198522.95
                           },
                           {
                               "id":  "2.2.1.5",
@@ -551,7 +474,31 @@
                               "macroId":  "2.2.1",
                               "macroName":  "Mão de Obra",
                               "color":  "#2a78d6",
-                              "total":  171756.05
+                              "total":  171756.05000000002
+                          },
+                          {
+                              "id":  "2.2.1.6",
+                              "name":  "FGTS",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  60814.099999999991
+                          },
+                          {
+                              "id":  "2.2.1.9",
+                              "name":  "Seguro de vida",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  1908.6900000000003
+                          },
+                          {
+                              "id":  "2.2.1.10",
+                              "name":  "Vale Transporte",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  44512.53
                           },
                           {
                               "id":  "2.2.1.11",
@@ -570,12 +517,28 @@
                               "total":  38576.75
                           },
                           {
-                              "id":  "2.2.1.9",
-                              "name":  "Seguro de vida",
+                              "id":  "2.2.1.13",
+                              "name":  "Vale Refeição",
                               "macroId":  "2.2.1",
                               "macroName":  "Mão de Obra",
                               "color":  "#2a78d6",
-                              "total":  1908.69
+                              "total":  2383.04
+                          },
+                          {
+                              "id":  "2.2.1.16",
+                              "name":  "Exames admissionais / Demissionais",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  13098.36
+                          },
+                          {
+                              "id":  "2.2.1.19",
+                              "name":  "Outras despesas com mão de obra",
+                              "macroId":  "2.2.1",
+                              "macroName":  "Mão de Obra",
+                              "color":  "#2a78d6",
+                              "total":  33417.090000000004
                           },
                           {
                               "id":  "2.2.2.1",
@@ -586,52 +549,12 @@
                               "total":  86289.03
                           },
                           {
-                              "id":  "2.2.4.5",
-                              "name":  "Equipamentos  Pequeno Porte",
-                              "macroId":  "2.2.4",
-                              "macroName":  "Equipamentos",
-                              "color":  "#eda100",
-                              "total":  32937.24
-                          },
-                          {
-                              "id":  "2.2.2.16",
-                              "name":  "Usinagem de C.B.U.Q",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  1340757.35
-                          },
-                          {
                               "id":  "2.2.2.2",
                               "name":  "Combustíveis - COMBOIO TERCEIRO",
                               "macroId":  "2.2.2",
                               "macroName":  "Materiais",
                               "color":  "#eb6834",
                               "total":  129266.87
-                          },
-                          {
-                              "id":  "2.2.1.19",
-                              "name":  "Outras despesas com mão de obra",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  33417.09
-                          },
-                          {
-                              "id":  "2.2.5.8",
-                              "name":  "Serviços motoboy e malote",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  10613.5
-                          },
-                          {
-                              "id":  "2.2.2.7",
-                              "name":  "Materiais Operacionais",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  73169.51
                           },
                           {
                               "id":  "2.2.2.3",
@@ -642,12 +565,12 @@
                               "total":  37096.55
                           },
                           {
-                              "id":  "2.2.3.1",
-                              "name":  "Sub-Empreiteiro - Infraestruturas",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  58747.94
+                              "id":  "2.2.2.4",
+                              "name":  "Agregados",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  57642.400000000009
                           },
                           {
                               "id":  "2.2.2.5",
@@ -658,12 +581,172 @@
                               "total":  88740
                           },
                           {
+                              "id":  "2.2.2.6",
+                              "name":  "Contas de Consumo",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  28970.690000000002
+                          },
+                          {
+                              "id":  "2.2.2.7",
+                              "name":  "Materiais Operacionais",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  73169.51
+                          },
+                          {
+                              "id":  "2.2.2.8",
+                              "name":  "Materiais de Sinalização",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  6300
+                          },
+                          {
+                              "id":  "2.2.2.9",
+                              "name":  "Mat. de Segurança e Proteção",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  12674.65
+                          },
+                          {
+                              "id":  "2.2.2.10",
+                              "name":  "Locação banheiro quimico - guaritas",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  17400
+                          },
+                          {
+                              "id":  "2.2.2.13",
+                              "name":  "CAP e Emulsão - Faturamento Triade",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  1741658.03
+                          },
+                          {
+                              "id":  "2.2.2.14",
+                              "name":  "CAP e Emulsão - FRETE",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  54337.25
+                          },
+                          {
+                              "id":  "2.2.2.16",
+                              "name":  "Usinagem de C.B.U.Q",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  1340757.3499999999
+                          },
+                          {
+                              "id":  "2.2.2.17",
+                              "name":  "Transporte Massa Alfáltica",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  14245.7
+                          },
+                          {
+                              "id":  "2.2.2.18",
+                              "name":  "Usinagem de RAP",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  136861.13
+                          },
+                          {
+                              "id":  "2.2.2.19",
+                              "name":  "Materiais de apoio canteiro",
+                              "macroId":  "2.2.2",
+                              "macroName":  "Materiais",
+                              "color":  "#eb6834",
+                              "total":  182
+                          },
+                          {
+                              "id":  "2.2.3.1",
+                              "name":  "Sub-Empreiteiro - Infraestruturas",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  58747.94
+                          },
+                          {
+                              "id":  "2.2.3.2",
+                              "name":  "Sub-empreiteiros - Carreteiros",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  298381.79
+                          },
+                          {
+                              "id":  "2.2.3.3",
+                              "name":  "Gerenciadora",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  96390.739999999991
+                          },
+                          {
+                              "id":  "2.2.3.4",
+                              "name":  "Controle Técnologico",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  75575.99
+                          },
+                          {
+                              "id":  "2.2.3.6",
+                              "name":  "Segurança e Vigilância",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  168234.74
+                          },
+                          {
                               "id":  "2.2.3.8",
                               "name":  "Locação de canteiro/ Alojamento",
                               "macroId":  "2.2.3",
                               "macroName":  "Serviços de Terceiros",
                               "color":  "#1baf7a",
-                              "total":  322553.45
+                              "total":  322553.44999999995
+                          },
+                          {
+                              "id":  "2.2.3.9",
+                              "name":  "Aplicação de CBUQ",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  660024.92
+                          },
+                          {
+                              "id":  "2.2.3.12",
+                              "name":  "ISS - Terceiros",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  36579.41
+                          },
+                          {
+                              "id":  "2.2.3.14",
+                              "name":  "Despesas Operacionais Terceiros",
+                              "macroId":  "2.2.3",
+                              "macroName":  "Serviços de Terceiros",
+                              "color":  "#1baf7a",
+                              "total":  1166023.4
+                          },
+                          {
+                              "id":  "2.2.4.1",
+                              "name":  "Equipamentos LOGGA",
+                              "macroId":  "2.2.4",
+                              "macroName":  "Equipamentos",
+                              "color":  "#eda100",
+                              "total":  309050
                           },
                           {
                               "id":  "2.2.4.2",
@@ -679,135 +762,15 @@
                               "macroId":  "2.2.4",
                               "macroName":  "Equipamentos",
                               "color":  "#eda100",
-                              "total":  265510.79
+                              "total":  265510.79000000004
                           },
                           {
-                              "id":  "2.2.4.1",
-                              "name":  "Equipamentos LOGGA",
+                              "id":  "2.2.4.5",
+                              "name":  "Equipamentos  Pequeno Porte",
                               "macroId":  "2.2.4",
                               "macroName":  "Equipamentos",
                               "color":  "#eda100",
-                              "total":  309050
-                          },
-                          {
-                              "id":  "2.2.2.13",
-                              "name":  "CAP e Emulsão - Faturamento Triade",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  1741658.03
-                          },
-                          {
-                              "id":  "2.2.3.6",
-                              "name":  "Segurança e Vigilância",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  168234.74
-                          },
-                          {
-                              "id":  "2.2.3.2",
-                              "name":  "Sub-empreiteiros - Carreteiros",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  298381.79
-                          },
-                          {
-                              "id":  "2.2.2.17",
-                              "name":  "Transporte Massa Alfáltica",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  14245.7
-                          },
-                          {
-                              "id":  "2.2.5.1",
-                              "name":  "Reembolso de despesas",
-                              "macroId":  "2.2.5",
-                              "macroName":  "Despesas Administrativas",
-                              "color":  "#e87ba4",
-                              "total":  2130.69
-                          },
-                          {
-                              "id":  "2.2.4.7",
-                              "name":  "Equipamentos - Personal",
-                              "macroId":  "2.2.4",
-                              "macroName":  "Equipamentos",
-                              "color":  "#eda100",
-                              "total":  41900.95
-                          },
-                          {
-                              "id":  "2.2.1.13",
-                              "name":  "Vale Refeição",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  2383.04
-                          },
-                          {
-                              "id":  "2.2.1.4",
-                              "name":  "Indiretos - PJ",
-                              "macroId":  "2.2.1",
-                              "macroName":  "Mão de Obra",
-                              "color":  "#2a78d6",
-                              "total":  198522.95
-                          },
-                          {
-                              "id":  "2.2.2.14",
-                              "name":  "CAP e Emulsão - FRETE",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  54337.25
-                          },
-                          {
-                              "id":  "2.2.3.12",
-                              "name":  "ISS - Terceiros",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  36579.41
-                          },
-                          {
-                              "id":  "2.2.2.4",
-                              "name":  "Agregados",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  57642.4
-                          },
-                          {
-                              "id":  "2.2.3.9",
-                              "name":  "Aplicação de CBUQ",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  660024.92
-                          },
-                          {
-                              "id":  "2.2.2.9",
-                              "name":  "Mat. de Segurança e Proteção",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  12674.65
-                          },
-                          {
-                              "id":  "2.2.3.3",
-                              "name":  "Gerenciadora",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  96390.74
-                          },
-                          {
-                              "id":  "2.2.3.4",
-                              "name":  "Controle Técnologico",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  75575.99
+                              "total":  32937.24
                           },
                           {
                               "id":  "2.2.4.6",
@@ -818,12 +781,12 @@
                               "total":  15000
                           },
                           {
-                              "id":  "2.2.2.18",
-                              "name":  "Usinagem de RAP",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  136861.13
+                              "id":  "2.2.4.7",
+                              "name":  "Equipamentos - Personal",
+                              "macroId":  "2.2.4",
+                              "macroName":  "Equipamentos",
+                              "color":  "#eda100",
+                              "total":  41900.95
                           },
                           {
                               "id":  "2.2.4.8",
@@ -834,20 +797,68 @@
                               "total":  81952.69
                           },
                           {
-                              "id":  "2.2.2.19",
-                              "name":  "Materiais de apoio canteiro",
-                              "macroId":  "2.2.2",
-                              "macroName":  "Materiais",
-                              "color":  "#eb6834",
-                              "total":  182
+                              "id":  "2.2.5.1",
+                              "name":  "Reembolso de despesas",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  2130.69
                           },
                           {
-                              "id":  "2.2.3.14",
-                              "name":  "Despesas Operacionais Terceiros",
-                              "macroId":  "2.2.3",
-                              "macroName":  "Serviços de Terceiros",
-                              "color":  "#1baf7a",
-                              "total":  1166023.4
+                              "id":  "2.2.5.2",
+                              "name":  "TPOV e DAMSP",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  4308.6100000000006
+                          },
+                          {
+                              "id":  "2.2.5.3",
+                              "name":  "Garantias e seguros",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  732.51
+                          },
+                          {
+                              "id":  "2.2.5.5",
+                              "name":  "Serviços Contabeis",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  15012.05
+                          },
+                          {
+                              "id":  "2.2.5.8",
+                              "name":  "Serviços motoboy e malote",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  10613.5
+                          },
+                          {
+                              "id":  "2.2.5.9",
+                              "name":  "Associações de Classes e ARTs",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  6016.6600000000008
+                          },
+                          {
+                              "id":  "2.2.5.10",
+                              "name":  "Equip. e materiais de Informatica/escritório",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  15573.75
+                          },
+                          {
+                              "id":  "2.2.5.11",
+                              "name":  "Tarifas Bancarias",
+                              "macroId":  "2.2.5",
+                              "macroName":  "Despesas Administrativas",
+                              "color":  "#e87ba4",
+                              "total":  1411.6999999999998
                           }
                       ],
     "topFornecedores":  [
@@ -11795,19 +11806,43 @@
   document.getElementById('meta-atualizado').textContent = DATA.meta.generatedAt;
   document.getElementById('footer-gen').textContent = 'Dados extraídos em ' + DATA.meta.generatedAt;
 
+  // ---------------- icons ----------------
+  var ICONS = {
+    revenue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l5-6 4 3 5-7"/><path d="M14 6h5v5"/></svg>',
+    tax: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.3"/><circle cx="17" cy="17" r="2.3"/><line x1="18" y1="6" x2="6" y2="18"/></svg>',
+    cost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+    trendUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15l6-6 4 4 6-8"/><path d="M14 5h6v6"/></svg>',
+    trendDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l6 6 4-4 6 8"/><path d="M14 19h6v-6"/></svg>',
+    gauge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17a8 8 0 0 1 16 0"/><line x1="12" y1="17" x2="15.5" y2="11"/><circle cx="12" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>'
+  };
+  function iconEl(name, cls){
+    var span = el('span', 'icon' + (cls ? ' '+cls : ''));
+    span.innerHTML = ICONS[name];
+    return span;
+  }
+
+  var isPositive = DATA.kpis.resultado >= 0;
+  var resultCls = isPositive ? 'good' : 'critical';
+  var resultIcon = isPositive ? 'trendUp' : 'trendDown';
+  var margemStr = DATA.kpis.receitaLiquida > 0
+    ? (DATA.kpis.margemCanteiro * 100).toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%'
+    : '—';
+
   // ---------------- KPIs ----------------
   var kpiRow = document.getElementById('kpi-row');
   var kpiDefs = [
-    { label:'Custo total incorrido', value: fmtBRL(DATA.kpis.custoTotal) },
-    { label:'Receita reconhecida', value: fmtBRL(DATA.kpis.receitaBruta), note:'Ainda não faturado no período' },
-    { label:'Resultado do período', value: fmtBRL(DATA.kpis.resultado), cls:'critical' },
-    { label:'Lançamentos de despesa', value: DATA.kpis.numLancamentos.toLocaleString('pt-BR') },
-    { label:'Fornecedores ativos', value: DATA.kpis.fornecedoresAtivos.toLocaleString('pt-BR') },
-    { label:'Ticket médio', value: fmtBRL(DATA.kpis.ticketMedio) }
+    { icon:'revenue', label:'Receita líquida', value: fmtBRL(DATA.kpis.receitaLiquida) },
+    { icon:'tax', label:'Custos receita canteiro', value: fmtBRL(DATA.kpis.custosReceitaCanteiro) },
+    { icon:'cost', label:'Custos operacionais', value: fmtBRL(DATA.kpis.custosOperacionais) },
+    { icon:resultIcon, iconCls:resultCls, label:'Resultado do período', value: fmtBRL(DATA.kpis.resultado), cls:resultCls },
+    { icon:'gauge', iconCls:resultCls, label:'Margem de canteiro', value: margemStr, cls:resultCls }
   ];
   kpiDefs.forEach(function(k){
     var tile = el('div','kpi');
-    tile.appendChild(el('div','label', k.label));
+    var lbl = el('div','label');
+    lbl.appendChild(iconEl(k.icon, k.iconCls));
+    lbl.appendChild(document.createTextNode(k.label));
+    tile.appendChild(lbl);
     var v = el('div','value tabular' + (k.cls? ' '+k.cls:''), k.value);
     tile.appendChild(v);
     if(k.note) tile.appendChild(el('div','note', k.note));
@@ -11817,17 +11852,23 @@
   // ---------------- resultado card ----------------
   var rc = document.getElementById('result-card');
   var cells = [
-    { label:'Custo Canteiro (incorrido)', value: fmtBRL(DATA.kpis.custoTotal) },
-    { label:'Receita bruta reconhecida', value: fmtBRL(DATA.kpis.receitaBruta) },
-    { label:'Resultado (Lucro Bruto)', value: fmtBRL(DATA.kpis.resultado), cls:'critical' }
+    { icon:'revenue', label:'Receita líquida reconhecida', value: fmtBRL(DATA.kpis.receitaLiquida) },
+    { icon:'cost', label:'Custo Canteiro (total)', value: fmtBRL(DATA.kpis.custoCanteiro) },
+    { icon:resultIcon, iconCls:resultCls, label:'Resultado (Lucro Bruto)', value: fmtBRL(DATA.kpis.resultado), cls:resultCls }
   ];
   cells.forEach(function(c){
     var cell = el('div','result-cell');
-    cell.appendChild(el('div','rc-label', c.label));
+    var lbl = el('div','rc-label');
+    lbl.appendChild(iconEl(c.icon, c.iconCls));
+    lbl.appendChild(document.createTextNode(c.label));
+    cell.appendChild(lbl);
     cell.appendChild(el('div','rc-value tabular' + (c.cls?' '+c.cls:''), c.value));
     rc.appendChild(cell);
   });
-  var note = el('div','result-note', 'A Ata ainda não teve medições faturadas neste período — todo o valor incorrido está registrado como custo em aberto, sem contrapartida de receita.');
+  var noteText = DATA.kpis.receitaLiquida > 0
+    ? ('Margem de canteiro no período: ' + margemStr + ' sobre a receita líquida reconhecida (Receita Líquida − Custo Canteiro).')
+    : 'A Ata ainda não teve medições faturadas neste período — todo o valor incorrido está registrado como custo em aberto, sem contrapartida de receita.';
+  var note = el('div','result-note' + (isPositive && DATA.kpis.receitaLiquida > 0 ? ' good' : ''), noteText);
   rc.appendChild(note);
 
   // ---------------- ranked bar chart (macro categories) ----------------
@@ -11854,14 +11895,14 @@
     track.appendChild(fill);
     track.tabIndex = 0;
     track.addEventListener('mousemove', function(e){
-      showTip(e.clientX, e.clientY, m.name, fmtBRL(m.total) + ' · ' + pct(m.total, DATA.kpis.custoTotal));
+      showTip(e.clientX, e.clientY, m.name, fmtBRL(m.total) + ' · ' + pct(m.total, DATA.kpis.custosOperacionais));
     });
     track.addEventListener('mouseleave', hideTip);
     row.appendChild(track);
     var valWrap = el('div','rb-value tabular');
     valWrap.appendChild(document.createTextNode(fmtBRL(m.total)));
     var pctSpan = el('span','rb-pct');
-    pctSpan.textContent = ' · ' + pct(m.total, DATA.kpis.custoTotal);
+    pctSpan.textContent = ' · ' + pct(m.total, DATA.kpis.custosOperacionais);
     valWrap.appendChild(pctSpan);
     row.appendChild(valWrap);
     rankWrap.appendChild(row);
@@ -11923,7 +11964,7 @@
     head.appendChild(sw);
     head.appendChild(el('span','ag-name', m.name));
     head.appendChild(el('span','ag-total tabular', fmtBRL(m.total)));
-    head.appendChild(el('span','ag-pct', pct(m.total, DATA.kpis.custoTotal)));
+    head.appendChild(el('span','ag-pct', pct(m.total, DATA.kpis.custosOperacionais)));
     var chev = el('span','chev', '▸');
     head.appendChild(chev);
     head.addEventListener('click', function(){ group.classList.toggle('open'); });

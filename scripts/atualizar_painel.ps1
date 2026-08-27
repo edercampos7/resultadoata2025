@@ -24,7 +24,20 @@ $work = Join-Path $env:TEMP ("painel_build_" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $work | Out-Null
 $extractDir = Join-Path $work "xlsx_extract"
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::ExtractToDirectory($Xlsx, $extractDir)
+Add-Type -AssemblyName System.IO.Compression
+# abre com FileShare.ReadWrite pois o Excel costuma manter o .xlsx aberto/travado
+# enquanto o usuario o edita
+$xlsxStream = New-Object System.IO.FileStream($Xlsx, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+$xlsxArchive = New-Object System.IO.Compression.ZipArchive($xlsxStream, [System.IO.Compression.ZipArchiveMode]::Read)
+foreach ($entry in $xlsxArchive.Entries) {
+    if ($entry.FullName.EndsWith('/')) { continue }
+    $dest = Join-Path $extractDir $entry.FullName
+    $destDir = Split-Path $dest -Parent
+    if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $dest, $true)
+}
+$xlsxArchive.Dispose()
+$xlsxStream.Dispose()
 
 function Load-Xml($path) {
     $text = [System.IO.File]::ReadAllText($path, $utf8)
@@ -79,11 +92,31 @@ foreach ($row in $rows2) {
     foreach ($c in $row.SelectNodes('a:c', $ns)) { $cells[(Col-Letters $c.r)] = Get-CellValue $c $ns }
     $id = $cells['B']; $desc = $cells['C']
     if ((-not $id) -and (-not $desc)) { continue }
-    $categories.Add([pscustomobject]@{ id = $id; desc = $desc; total2026 = To-Num $cells['R'] })
+    $months2026 = [ordered]@{}
+    for ($i = 0; $i -lt $monthCols.Count; $i++) { $months2026[$monthKeys[$i]] = To-Num $cells[$monthCols[$i]] }
+    # "total" = coluna E (TOTAL geral da planilha) -- e' a mesma referencia que
+    # aparece na propria planilha (DRF), preferida sobre somar o razao (sheet1)
+    # pois a formula da DRF tem uma pequena divergencia historica de ancoragem
+    # de intervalo (poucas dezenas/centenas de reais) em relacao ao razao bruto.
+    $categories.Add([pscustomobject]@{ id = $id; desc = $desc; total = To-Num $cells['E']; months2026 = $months2026 })
 }
 
 $idToDesc = @{}
 foreach ($cat in $categories) { if ($cat.desc -and $cat.desc.Trim() -ne '') { $idToDesc[$cat.id] = $cat.desc.Trim() } }
+
+function TotalFor($id) { $c = $categories | Where-Object { $_.id -eq $id } | Select-Object -First 1; return $(if ($c) { $c.total } else { 0 }) }
+
+# ids "3." (LUCRO BRUTO) e "4." (MARGEM CANTEIRO) so aparecem no bloco-resumo
+# (linhas >=109) da DRF, nao no bloco principal acima
+$summaryTotals = @{}
+foreach ($row in $rows2) {
+    $rn = [int]$row.r
+    if ($rn -lt 109) { continue }
+    $cells = @{}
+    foreach ($c in $row.SelectNodes('a:c', $ns)) { $cells[(Col-Letters $c.r)] = Get-CellValue $c $ns }
+    $id = $cells['B']
+    if ($id -and -not $summaryTotals.ContainsKey($id)) { $summaryTotals[$id] = To-Num $cells['E'] }
+}
 
 function DescFor($id) { return ($categories | Where-Object { $_.id -eq $id } | Select-Object -First 1).desc }
 $macroDefs = @(
@@ -172,20 +205,28 @@ foreach ($t in $rawTx) {
 }
 $expenseTx = $transactions | Where-Object { $_.isExpense }
 
+# Totais agregados (macro-categoria, sub-categoria, KPIs) vem da propria DRF da
+# planilha -- nao de uma soma manual do razao -- para garantir que os numeros do
+# site sejam exatamente os que a controladoria ve na planilha.
+$categoryById = @{}
+foreach ($cat in $categories) { $categoryById[$cat.id] = $cat }
+
 $macroCategories = New-Object System.Collections.Generic.List[object]
 foreach ($m in $macroDefs) {
-    $rows = $expenseTx | Where-Object { $_.macroId -eq $m.id }
+    $cat = $categoryById[$m.id]
     $months = [ordered]@{}
-    foreach ($mk in $monthKeysActive) { $months[$mk] = [math]::Round((($rows | Where-Object { $_.mesKey -eq $mk } | Measure-Object -Property valor -Sum).Sum), 2) }
-    $macroCategories.Add([pscustomobject]@{ id = $m.id; name = $m.name; color = $m.color; total = [math]::Round((($rows | Measure-Object -Property valor -Sum).Sum), 2); months = $months })
+    foreach ($mk in $monthKeysActive) { $months[$mk] = $(if ($cat) { $cat.months2026[$mk] } else { 0 }) }
+    $macroCategories.Add([pscustomobject]@{ id = $m.id; name = $m.name; color = $m.color; total = $(if ($cat) { $cat.total } else { 0 }); months = $months })
 }
 $macroTotal = ($macroCategories | Measure-Object -Property total -Sum).Sum
 
 $subCategories = New-Object System.Collections.Generic.List[object]
-foreach ($g in ($expenseTx | Group-Object idCode)) {
-    $sample = $g.Group[0]
-    $m = $macroDefs | Where-Object { $_.id -eq $sample.macroId } | Select-Object -First 1
-    $subCategories.Add([pscustomobject]@{ id = $sample.idCode; name = $(if ($sample.subCategoria) { $sample.subCategoria } else { $sample.idCode }); macroId = $sample.macroId; macroName = $m.name; color = $m.color; total = [math]::Round((($g.Group | Measure-Object -Property valor -Sum).Sum), 2) })
+foreach ($m in $macroDefs) {
+    $prefix = $m.id + '.'
+    $subs = $categories | Where-Object { $_.id.StartsWith($prefix) -and ($_.id.Substring($prefix.Length) -notmatch '\.') -and $_.total -ne 0 }
+    foreach ($s in $subs) {
+        $subCategories.Add([pscustomobject]@{ id = $s.id; name = $(if ($s.desc) { $s.desc.Trim() } else { $s.id }); macroId = $m.id; macroName = $m.name; color = $m.color; total = $s.total })
+    }
 }
 
 $fornecedoresAtivos = ($expenseTx | Select-Object -ExpandProperty fornecedor -Unique).Count
@@ -208,12 +249,12 @@ $site = [ordered]@{
         monthLabels = $monthLabelsActive
     }
     kpis = [ordered]@{
-        custoTotal = [math]::Round($macroTotal, 2)
-        receitaBruta = 0
-        resultado = [math]::Round(-$macroTotal, 2)
-        numLancamentos = $expenseTx.Count
-        fornecedoresAtivos = $fornecedoresAtivos
-        ticketMedio = $(if ($expenseTx.Count -gt 0) { [math]::Round($macroTotal / $expenseTx.Count, 2) } else { 0 })
+        receitaLiquida = TotalFor '10.1'
+        custosReceitaCanteiro = TotalFor '2.1'
+        custosOperacionais = [math]::Round($macroTotal, 2)
+        custoCanteiro = TotalFor '2.'
+        resultado = $(if ($summaryTotals.ContainsKey('3.')) { $summaryTotals['3.'] } else { -$macroTotal })
+        margemCanteiro = $(if ($summaryTotals.ContainsKey('4.')) { $summaryTotals['4.'] } else { 0 })
     }
     macroCategories = $macroCategories
     subCategories = $subCategories
@@ -234,5 +275,7 @@ $outPath = Join-Path $ProjectDir "painel-custos-obra20.html"
 
 Remove-Item -Recurse -Force $work
 Write-Host ("Painel atualizado: " + $outPath)
-Write-Host ("Custo total: R$ " + $site.kpis.custoTotal)
-Write-Host ("Lancamentos: " + $site.kpis.numLancamentos + " | Fornecedores: " + $fornecedoresAtivos)
+Write-Host ("Receita Liquida: R$ " + $site.kpis.receitaLiquida)
+Write-Host ("Custos Operacionais: R$ " + $site.kpis.custosOperacionais + " | Custos Receita Canteiro: R$ " + $site.kpis.custosReceitaCanteiro)
+Write-Host ("Resultado: R$ " + $site.kpis.resultado + " | Margem Canteiro: " + ([math]::Round($site.kpis.margemCanteiro * 100, 2)) + "%")
+Write-Host ("Lancamentos: " + $expenseTx.Count + " | Fornecedores: " + $fornecedoresAtivos)
