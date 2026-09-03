@@ -540,7 +540,7 @@
   var maxSub = 0;
   DATA.subCategories.forEach(function(s){ if(s.total > maxSub) maxSub = s.total; });
   macro.forEach(function(m, idx){
-    var group = el('div','acc-group' + (idx===0 ? ' open' : ''));
+    var group = el('div','acc-group');
     var head = document.createElement('button');
     head.className = 'acc-head';
     head.type = 'button';
